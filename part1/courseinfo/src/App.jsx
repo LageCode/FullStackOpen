@@ -26,9 +26,7 @@ const Content = (props) => {
 }
 
 const Total = (props) => {
-  console.log(props.list)
-
-  const sum = props.list.reduce((acc, curr) => acc + curr)
+  const sum = props.parts.map(part => part.exercises).reduce((acc, curr) => acc + curr)
 
   return (
     <p>
@@ -39,26 +37,26 @@ const Total = (props) => {
 
 const App = () => {
   const course = 'Half Stack application development'
-  const part1 = {
-    name: 'Fundamentals of React',
-    exercises: 10
-  }
-  const part2 = {
-    name: 'Using props to pass data',
-    exercises: 7
-  }
-  const part3 = {
-    name: 'State of a component',
-    exercises: 14
-  }
-
-  const parts = [part1, part2, part3]
+  const parts = [
+    {
+      name: 'Fundamentals of React',
+      exercises: 10
+    },
+    {
+      name: 'Using props to pass data',
+      exercises: 7
+    },
+    {
+      name: 'State of a component',
+      exercises: 14
+    }
+  ]
 
   return (
     <div>
       <Header title={course} />
       <Content parts={parts} />
-      <Total list={parts.map(p => p.exercises)} />
+      <Total parts={parts} />
     </div>
   )
 }
