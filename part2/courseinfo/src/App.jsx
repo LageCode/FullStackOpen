@@ -1,39 +1,6 @@
-const Header = ({ title }) => <h2>{title}</h2>
+import React from "react"
 
-const Part = ({ name, exercises }) => <li><p>{name} <sub>{exercises} exercises</sub></p></li>
-
-const Content = ({ parts }) => <ul>{parts.map(p => <Part key={p.id} name={p.name} exercises={p.exercises} />)}</ul>
-
-const Total = ({ parts }) => <p><b>Total of {parts.map(p => p.exercises).reduce((acc, curr) => acc + curr)} exercises</b></p>
-
-const Course = ({ course }) => {
-  return (
-    <div>
-      <Header title={course.name} />
-      <Content parts={course.parts} />
-      <Total parts={course.parts} />
-    </div>
-  )
-}
-
-const CourseColl = ({ courses }) => {
-  return (
-    <div>
-      {
-        courses.map((course, i, arr) => {
-          return (
-            <>
-              <Course course={course} />
-              {
-                i !== arr.length - 1 && <hr />
-              }
-            </>
-          )
-        })
-      }
-    </div>
-  )
-}
+import CourseCollection from "./CourseCollection"
 
 const App = () => {
   const courses = [
@@ -81,7 +48,7 @@ const App = () => {
     }
   ]
 
-  return <CourseColl courses={courses} />
+  return <CourseCollection courses={courses} />
 }
 
 export default App
