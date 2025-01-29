@@ -8,11 +8,14 @@ const Part = ({ name, exercises }) => <li><p>{name} <sub>{exercises} exercises</
 
 const Content = ({ parts }) => <ul>{parts.map(p => <Part key={p.id} name={p.name} exercises={p.exercises} />)}</ul>
 
+const Total = ({ parts }) => <p><b>Total of {parts.map(p => p.exercises).reduce((acc, curr) => acc + curr)} exercises</b></p>
+
 const Course = ({ course }) => {
   return (
     <div>
       <Header title={course.name} />
       <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   )
 }
