@@ -1,53 +1,74 @@
 import { useState } from 'react'
 
-const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-1234567' }
-  ]) 
-  const [searchedString, setSearchedString] = useState('')
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
+const InputField = ({ name, val, setVal }) => <div>
+  <label htmlFor={`${name}-input-id`}>{name}</label>
+  <input id={`${name}-input-id`} value={val} onChange={(event) => setVal(event.target.value)} />
+</div>
 
-  const addContact = (contact) => {
-    if (persons.filter(p => p.name.toLocaleLowerCase() === contact.name.toLocaleLowerCase()).length > 0) {
-      alert(`${contact.name} is already in the phonebook !`)
-      return 
-    }
+const FilterField = ({ filterString, setFilterString }) => <div>
+  <h2>Search</h2>
+  <InputField name={"Filter shown with"} val={filterString} setVal={setFilterString} />
+</div>
 
-    const newPersons = [...persons, { name: contact.name, number: contact.number }]
-    setPersons(newPersons)
-  }
+const NewContactForm = ({ addContactAction }) => {
+  const [name, setName] = useState("");
+  const [number, setNumber] = useState("");
 
   const onFormSubmit = (event) => {
     event.preventDefault()
-    addContact({ name: newName, number: newNumber })
-  }
-
-  const onNameChange = (event) => setNewName(event.target.value)
-  const onNumberChange = (event) => setNewNumber(event.target.value)
-  const onSearchedStringChange = (event) => setSearchedString(event.target.value)
+    addContactAction({ name, number })
+    setName("");
+    setNumber("");
+  } 
 
   return (
     <div>
-      <h1>Phonebook</h1>
-      <h2>Search</h2>
-      <div>
-        filter shown with: <input value={searchedString} onChange={onSearchedStringChange} />
-      </div>
       <h2>Add a new</h2>
       <form onSubmit={onFormSubmit}>
-        <div>
-          name: <input value={newName} onChange={onNameChange} /><br />
-          number: <input value={newNumber} onChange={onNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
+        <InputField name={"Name"} val={name} setVal={setName} />
+        <InputField name={"Number"} val={number} setVal={setNumber} />
+        <button type='submit'>New</button> 
       </form>
-      <h2>Numbers</h2>
-      <ul>
-        {persons.filter(p => p.name.toLocaleLowerCase().includes(searchedString.toLocaleLowerCase())).map((p, i) => <li key={i}>{p.name} - {p.number}</li>)}
-      </ul>
+    </div>
+  )
+}
+
+const ContactList = ({ contacts, filterString }) => <div>
+  <h2>Contacts</h2>
+  <table>
+    <tbody>
+      {contacts
+        .filter(c => c.name.toLocaleLowerCase().includes(filterString.toLocaleLowerCase()))
+        .map((c, i) => <tr key={i}>
+          <th>{c.name}</th><td>{c.number}</td>
+        </tr>)}
+    </tbody>
+  </table>
+</div>
+
+const Phonebook = () => {
+  const [persons, setPersons] = useState([{ name: 'Arto Hellas', number: '040-1234567' }]) 
+  const [filterString, setFilterString] = useState("")
+
+  const addContactAction = ({ name, number }) => {
+    const newPersons = [...persons, { name, number }]
+    setPersons(newPersons)
+  }
+
+  return(
+    <div>
+      <h1>Phonebook</h1>
+      <FilterField filterString={filterString} setFilterString={setFilterString} />
+      <NewContactForm addContactAction={addContactAction} />
+      <ContactList contacts={persons} filterString={filterString} />
+    </div>
+  )
+}
+
+const App = () => {
+  return (
+    <div>
+      <Phonebook />
     </div>
   )
 }
