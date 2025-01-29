@@ -1,5 +1,27 @@
 import { useState } from 'react'
 
+const Anecdote = ({ text, votes }) => {
+  return (
+    <>
+      <p>{text}</p>
+      <p>has {votes} votes</p>
+    </>
+  )
+}
+
+const MostVoted = ({ anecdotes, votes }) => {
+  const mostVotedIndex = votes.reduce((accumulator, val, i, arr) => val > arr[accumulator] ? i : accumulator, 0)
+
+  if (votes[mostVotedIndex] === 0) return <p>No vote yet.</p>
+
+  return (
+    <div>
+      <h2>Anecdote with most votes</h2>
+      <Anecdote text={anecdotes[mostVotedIndex]} votes={votes[mostVotedIndex]} />
+    </div>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -27,10 +49,11 @@ const App = () => {
 
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
-      <p>has {votes[selected]} votes</p>
+      <Anecdote text={anecdotes[selected]} votes={votes[selected]} />
       <button onClick={handleVoteClick}>vote +</button>
       <button onClick={handleNextCLick}>next</button>
+      <hr />
+      <MostVoted anecdotes={anecdotes} votes={votes} />
     </div>
   )
 }
