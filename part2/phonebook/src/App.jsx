@@ -6,10 +6,19 @@ const App = () => {
   ]) 
   const [newName, setNewName] = useState('')
 
-  const onFormSubmit = (event) => {
-    event.preventDefault()
+  const addContact = (contact) => {
+    if (persons.filter(p => p.name.toLocaleLowerCase() === contact.name.toLocaleLowerCase()).length > 0) {
+      alert(`${contact.name} is already in the phonebook !`)
+      return 
+    }
+
     const newPersons = [...persons, { name: newName }]
     setPersons(newPersons)
+  }
+
+  const onFormSubmit = (event) => {
+    event.preventDefault()
+    addContact({ name: newName })
   }
 
   return (
