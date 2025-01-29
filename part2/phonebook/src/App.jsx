@@ -4,6 +4,7 @@ const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-1234567' }
   ]) 
+  const [searchedString, setSearchedString] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
@@ -22,13 +23,22 @@ const App = () => {
     addContact({ name: newName, number: newNumber })
   }
 
+  const onNameChange = (event) => setNewName(event.target.value)
+  const onNumberChange = (event) => setNewNumber(event.target.value)
+  const onSearchedStringChange = (event) => setSearchedString(event.target.value)
+
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <h2>Search</h2>
+      <div>
+        filter shown with: <input value={searchedString} onChange={onSearchedStringChange} />
+      </div>
+      <h2>Add a new</h2>
       <form onSubmit={onFormSubmit}>
         <div>
-          name: <input value={newName} onChange={(event) => setNewName(event.target.value)} /><br />
-          number: <input value={newNumber} onChange={(event) => setNewNumber(event.target.value)} />
+          name: <input value={newName} onChange={onNameChange} /><br />
+          number: <input value={newNumber} onChange={onNumberChange} />
         </div>
         <div>
           <button type="submit">add</button>
@@ -36,7 +46,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <ul>
-        {persons.map((p, i) => <li key={i}>{p.name} - {p.number}</li>)}
+        {persons.filter(p => p.name.toLocaleLowerCase().includes(searchedString.toLocaleLowerCase())).map((p, i) => <li key={i}>{p.name} - {p.number}</li>)}
       </ul>
     </div>
   )
