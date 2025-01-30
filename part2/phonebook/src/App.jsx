@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const InputField = ({ name, val, setVal }) => <div>
   <label htmlFor={`${name}-input-id`}>{name}</label>
@@ -19,7 +20,7 @@ const NewContactForm = ({ addContactAction }) => {
     addContactAction({ name, number })
     setName("");
     setNumber("");
-  } 
+  }
 
   return (
     <div>
@@ -27,7 +28,7 @@ const NewContactForm = ({ addContactAction }) => {
       <form onSubmit={onFormSubmit}>
         <InputField name={"Name"} val={name} setVal={setName} />
         <InputField name={"Number"} val={number} setVal={setNumber} />
-        <button type='submit'>New</button> 
+        <button type='submit'>New</button>
       </form>
     </div>
   )
@@ -47,15 +48,25 @@ const ContactList = ({ contacts, filterString }) => <div>
 </div>
 
 const Phonebook = () => {
-  const [persons, setPersons] = useState([{ name: 'Arto Hellas', number: '040-1234567' }]) 
+  const [persons, setPersons] = useState([{ name: 'Arto Hellas', number: '040-1234567' }])
   const [filterString, setFilterString] = useState("")
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
 
   const addContactAction = ({ name, number }) => {
     const newPersons = [...persons, { name, number }]
     setPersons(newPersons)
   }
 
-  return(
+  return (
     <div>
       <h1>Phonebook</h1>
       <FilterField filterString={filterString} setFilterString={setFilterString} />
