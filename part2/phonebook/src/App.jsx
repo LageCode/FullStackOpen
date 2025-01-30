@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import axios, { HttpStatusCode } from 'axios'
+
+const httpRestApiUrl = 'http://localhost:3001/persons'
 
 const InputField = ({ name, val, setVal }) => <div>
   <label htmlFor={`${name}-input-id`}>{name}</label>
@@ -48,22 +50,28 @@ const ContactList = ({ contacts, filterString }) => <div>
 </div>
 
 const Phonebook = () => {
-  const [persons, setPersons] = useState([{ name: 'Arto Hellas', number: '040-1234567' }])
+  const [persons, setPersons] = useState([])
   const [filterString, setFilterString] = useState("")
 
   useEffect(() => {
-    console.log('effect')
     axios
-      .get('http://localhost:3001/persons')
+      .get(httpRestApiUrl)
       .then(response => {
-        console.log('promise fulfilled')
         setPersons(response.data)
       })
   }, [])
 
   const addContactAction = ({ name, number }) => {
-    const newPersons = [...persons, { name, number }]
-    setPersons(newPersons)
+    const newContact = { name, number }
+
+    axios
+      .post(httpRestApiUrl, newContact)
+      .then((response) => {
+        if (response.status === HttpStatusCode.Created) {
+          const newPersons = [...persons, newContact]
+          setPersons(newPersons)
+        }
+      })
   }
 
   return (
