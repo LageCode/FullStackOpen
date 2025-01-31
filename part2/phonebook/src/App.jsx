@@ -96,6 +96,7 @@ const Phonebook = () => {
       .then(() => {
         triggerNotification({ type: NotificationTypes.SUCCESS, message: `${name} successfully created.` })
       })
+      .catch((error) => { triggerNotification({ type: NotificationTypes.ERROR, message: error.message }) })
   }
 
   const removeContactAction = (id, name) => {
@@ -109,6 +110,10 @@ const Phonebook = () => {
             setPersons(newPersons)
           }
         })
+        .then(() => {
+          triggerNotification({ type: NotificationTypes.SUCCESS, message: `${name} successfully removed.` })
+        })
+        .catch((error) => { triggerNotification({ type: NotificationTypes.ERROR, message: error.message }) })
     }
   }
 
@@ -125,6 +130,7 @@ const Phonebook = () => {
         .then(() => {
           triggerNotification({ type: NotificationTypes.SUCCESS, message: `${name} successfully updated.` })
         })
+        .catch((error) => { triggerNotification({ type: NotificationTypes.ERROR, message: error.message }) })
     }
   }
 
