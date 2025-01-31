@@ -13,13 +13,13 @@ const FilterField = ({ filterString, setFilterString }) => <div>
   <InputField name={"Filter shown with"} val={filterString} setVal={setFilterString} />
 </div>
 
-const NewContactForm = ({ addContactAction }) => {
+const NewContactForm = ({ addAction }) => {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
 
   const onFormSubmit = (event) => {
     event.preventDefault()
-    addContactAction({ name, number })
+    addAction({ name, number })
     setName("");
     setNumber("");
   }
@@ -36,14 +36,14 @@ const NewContactForm = ({ addContactAction }) => {
   )
 }
 
-const ContactList = ({ contacts, filterString }) => <div>
+const ContactList = ({ contacts, filterString, removeAction }) => <div>
   <h2>Contacts</h2>
   <table>
     <tbody>
       {contacts
         .filter(c => c.name.toLocaleLowerCase().includes(filterString.toLocaleLowerCase()))
         .map((c, i) => <tr key={i}>
-          <th>{c.name}</th><td>{c.number}</td>
+          <th>{c.name}</th><td>{c.number}</td><td><button onClick={() => removeAction(c.id, c.name)}>Remove</button></td>
         </tr>)}
     </tbody>
   </table>
@@ -73,12 +73,25 @@ const Phonebook = () => {
       })
   }
 
+  const removeContactAction = (id, name) => {
+    if (window.confirm(`Delete ${name} ?`)) {
+      contactService
+        .remove(id)
+        .then((response) => {
+          if (response.status === HttpStatusCode.Ok) {
+            const newPersons = persons.filter(p => p.id !== id)
+            setPersons(newPersons)
+          }
+        })
+    }
+  }
+
   return (
     <div>
       <h1>Phonebook</h1>
       <FilterField filterString={filterString} setFilterString={setFilterString} />
-      <NewContactForm addContactAction={addContactAction} />
-      <ContactList contacts={persons} filterString={filterString} />
+      <NewContactForm addAction={addContactAction} />
+      <ContactList contacts={persons} filterString={filterString} removeAction={removeContactAction} />
     </div>
   )
 }

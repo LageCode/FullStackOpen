@@ -6,7 +6,10 @@ const getAll = () => axios.get(url)
 
 const create = (newContact) => axios.post(url, newContact)
 
+const remove = (id) => axios.delete(`${url}/${id}`)
+
 export default {
     getAll,
-    create
+    create,
+    remove
 }
