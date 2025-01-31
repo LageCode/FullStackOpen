@@ -1,0 +1,19 @@
+.notification {
+  border: medium solid #000;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.success {
+  color: #1a1;
+  font-weight: bold;
+  border-color: #1a1;
+  background-color: #afa;
+}
+
+.error {
+  color: #a11;
+  font-weight: bold;
+  border-color: #a11;
+  background-color: #faa;
+}

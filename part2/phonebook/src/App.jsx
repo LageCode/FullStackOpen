@@ -1,7 +1,17 @@
 import { useState, useEffect } from 'react'
 import { HttpStatusCode } from 'axios'
 
+import './index.css'
 import contactService from './services/contacts'
+
+const NotificationTypes = {
+  SUCCESS: 'success',
+  ERROR: 'error'
+}
+
+const Notification = ({ type, message }) => <div className={`notification ${type}`}>
+  <p>{message}</p>
+</div>
 
 const InputField = ({ name, val, setVal }) => <div>
   <label htmlFor={`${name}-input-id`}>{name}</label>
@@ -13,7 +23,7 @@ const FilterField = ({ filterString, setFilterString }) => <div>
   <InputField name={"Filter shown with"} val={filterString} setVal={setFilterString} />
 </div>
 
-const NewContactForm = ({ addAction, updateAction }) => {
+const NewContactForm = ({ addAction, updateAction, triggerNotification }) => {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
 
@@ -60,6 +70,10 @@ const ContactList = ({ contacts, filterString, removeAction }) => <div>
 const Phonebook = () => {
   const [persons, setPersons] = useState([])
   const [filterString, setFilterString] = useState("")
+  const [notification, setNotification] = useState({
+    type: null,
+    message: null
+  })
 
   useEffect(() => {
     contactService.getAll()
@@ -78,6 +92,9 @@ const Phonebook = () => {
           const newPersons = [...persons, newContact]
           setPersons(newPersons)
         }
+      })
+      .then(() => {
+        triggerNotification({ type: NotificationTypes.SUCCESS, message: `${name} successfully created.` })
       })
   }
 
@@ -105,14 +122,25 @@ const Phonebook = () => {
             setPersons(newPersons)
           }
         })
+        .then(() => {
+          triggerNotification({ type: NotificationTypes.SUCCESS, message: `${name} successfully updated.` })
+        })
     }
+  }
+
+  const triggerNotification = ({ type, message }) => {
+    setNotification({ type, message })
+    setTimeout(() => {
+      setNotification({ type: null, message: null })
+    }, 5000)
   }
 
   return (
     <div>
       <h1>Phonebook</h1>
+      {notification.message && <Notification type={notification.type} message={notification.message} />}
       <FilterField filterString={filterString} setFilterString={setFilterString} />
-      <NewContactForm addAction={addContactAction} updateAction={updateContactAction} />
+      <NewContactForm addAction={addContactAction} updateAction={updateContactAction} triggerNotification={triggerNotification} />
       <ContactList contacts={persons} filterString={filterString} removeAction={removeContactAction} />
     </div>
   )
