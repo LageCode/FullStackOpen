@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios, { HttpStatusCode } from 'axios'
+import { HttpStatusCode } from 'axios'
 
 import contactService from './services/contacts'
 
@@ -13,15 +13,23 @@ const FilterField = ({ filterString, setFilterString }) => <div>
   <InputField name={"Filter shown with"} val={filterString} setVal={setFilterString} />
 </div>
 
-const NewContactForm = ({ addAction }) => {
+const NewContactForm = ({ addAction, updateAction }) => {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
 
   const onFormSubmit = (event) => {
     event.preventDefault()
-    addAction({ name, number })
-    setName("");
-    setNumber("");
+
+    contactService.getByName(name).then(response => {
+      if (response.data.length > 0) {
+        const id = response.data[0].id
+        updateAction(id, { name, number })
+      } else {
+        addAction({ name, number })
+        setName("");
+        setNumber("");
+      }
+    })
   }
 
   return (
@@ -74,6 +82,7 @@ const Phonebook = () => {
   }
 
   const removeContactAction = (id, name) => {
+
     if (window.confirm(`Delete ${name} ?`)) {
       contactService
         .remove(id)
@@ -86,11 +95,24 @@ const Phonebook = () => {
     }
   }
 
+  const updateContactAction = (id, { name, number }) => {
+    if (window.confirm(`Override contact ${name} with new number: ${number} ?`)) {
+      contactService
+        .update({ id, name, number })
+        .then((response) => {
+          if (response.status === HttpStatusCode.Ok) {
+            const newPersons = persons.map(p => p.id === id ? { id, name, number } : p)
+            setPersons(newPersons)
+          }
+        })
+    }
+  }
+
   return (
     <div>
       <h1>Phonebook</h1>
       <FilterField filterString={filterString} setFilterString={setFilterString} />
-      <NewContactForm addAction={addContactAction} />
+      <NewContactForm addAction={addContactAction} updateAction={updateContactAction} />
       <ContactList contacts={persons} filterString={filterString} removeAction={removeContactAction} />
     </div>
   )
