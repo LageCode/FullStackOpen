@@ -23,6 +23,18 @@ const CountryDetails = ({ name, capital, area, languages, image }) => {
 	)
 }
 
+const CountryListItem = ({ country, setList }) => <li>{country.name.common} <button onClick={() => { setList([country]) }}>show</button></li>
+
+const CountryList = ({ list, setList }) => {
+	return (
+		<ul>
+			{
+				list.map((cou, i) => <CountryListItem key={i} country={cou} setList={() => setList(cou)} />)
+			}
+		</ul>
+	)
+}
+
 const CountrySearch = () => {
 	const [name, setName] = useState("")
 	const [searchResult, setSearchResult] = useState(null)
@@ -45,6 +57,11 @@ const CountrySearch = () => {
 		}
 	}
 
+	const triggerCountry = (country) => {
+		setSearchResult([country])
+		setName(country.name.common)
+	}
+
 	return (
 		<div className='country-search'>
 			<label>Find Countries</label><br />
@@ -58,7 +75,7 @@ const CountrySearch = () => {
 						languages={countryDetails.languages}
 						image={countryDetails.image} />
 				) : searchResult && searchResult.length <= 10 ? (
-					searchResult.map((cou, i) => <p key={i}>{cou.name.common}</p>)
+					<CountryList list={searchResult} setList={triggerCountry} />
 				) : <p>Too many matches, specify another filter</p>
 			}
 		</div>
