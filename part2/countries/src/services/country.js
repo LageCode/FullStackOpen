@@ -23,9 +23,6 @@ const getAll = () => cache.lastUpdate && Date.now() - cache.lastUpdate < 8640000
             return response.data
         })
 
-const getCoutryByName = (name) => axios.get(genUrl(Endpoints.NAME, name))
-    .then(response => response.data)
-
 export const findCountryByName = (name) => getAll()
     .then(countryList => {
         console.log(`Calling findCountryByName("${name}")`)

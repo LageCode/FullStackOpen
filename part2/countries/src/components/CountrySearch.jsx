@@ -1,8 +1,37 @@
 import React, { useEffect, useState } from 'react'
 
 import { findCountryByName } from '../services/country'
+import { getWeatherData, getIcon } from '../services/weather'
 
-const CountryDetails = ({ name, capital, area, languages, image }) => {
+const CountryWeatherDetails = ({ lat, lng }) => {
+	const [weather, setWeather] = useState(null)
+
+	useEffect(() => {
+		getWeatherData(lat, lng).then(response => {
+			setWeather(
+				{
+					temp: response.temp,
+					windSpeed: response.wind_spd,
+					icon: getIcon(response.weather.icon)
+				}
+			)
+		})
+	}, [])
+
+	if (!weather) {
+		return null
+	}
+
+	return (
+		<div className='weather-details'>
+			<p>temperature: {weather.temp}°c</p>
+			<p>wind speed: {weather.windSpeed}m/s</p>
+			<img src={weather.icon} />
+		</div>
+	)
+}
+
+const CountryDetails = ({ name, capital, area, languages, image: { png, alt }, position: { lat, lng } }) => {
 	return (
 		<div className='search-result'>
 			<h2>{name}</h2>
@@ -18,7 +47,8 @@ const CountryDetails = ({ name, capital, area, languages, image }) => {
 					</ul>
 				</div>
 			}
-			<img src={image.png} alt={image.alt} />
+			<img src={png} alt={alt} />
+			<CountryWeatherDetails lat={lat} lng={lng} />
 		</div>
 	)
 }
@@ -54,6 +84,10 @@ const CountrySearch = () => {
 		image: {
 			png: country.flags.png,
 			alt: country.flags.alt
+		},
+		position: {
+			lat: country.latlng[0],
+			lng: country.latlng[1]
 		}
 	}
 
@@ -73,7 +107,8 @@ const CountrySearch = () => {
 						capital={countryDetails.capital}
 						area={countryDetails.area}
 						languages={countryDetails.languages}
-						image={countryDetails.image} />
+						image={countryDetails.image}
+						position={countryDetails.position} />
 				) : searchResult && searchResult.length <= 10 ? (
 					<CountryList list={searchResult} setList={triggerCountry} />
 				) : <p>Too many matches, specify another filter</p>
