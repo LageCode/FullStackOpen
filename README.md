@@ -181,7 +181,26 @@ The event handler function can access the data from the *body* property of the *
 
 > [!WARNING]
 >
-> A potential cause for issues is an incorrectly set *Content-Type* header in requests. This can happen with Postman if the type of body is not defined correctly:
+> A potential cause for issues is an incorrectly set *Content-Type* header in requests. This can happen with Postman if the type of body is not defined correctly
+
+#### HTTP request types
+
+HTTP standard:
+
+- Safety: `GET` and `HEAD` methods should not have the significance of taking an action other than retrieval. By side effects, it means that the state of the database must not change  as a result of the request, and the response must only return data that already exists on the server.
+- Idempotency: All HTTP requests except `POST` should be *idempotent*, it refers to the property where making the same request multiple times has  the same effect as making it once. This is important for ensuring that  repeated requests do not cause unintended side effects.
+
+> [!TIP]
+>
+> `HEAD` should work exactly like `GET` but it does not return anything but  the status code and response headers. The response body will not be  returned when you make a `HEAD` request.
+
+#### Middleware
+
+Middleware are functions that can be used for handling *request* and *response* objects e.g. the previous `express.json()` parser is a middleware.
+
+In practice, several middlewares can be used at the same time ; they're executed one by one in the order that they were listed in the application code.
+
+Middleware is a function that receives three parameters: `(request, response, next)`. The `next` function yields control to the next middleware.
 
 ## Personal Notes  
 
@@ -264,7 +283,7 @@ The event handler function can access the data from the *body* property of the *
   
       ```javascript
       const app = express() // use express
-      app.use(express.json()) // Use body parser (needed for POST)
+      app.use(express.json()) // use body parser (needed for POST)
       ```
   
     - The new generated ids will be of `Number` type. Since that, it's necessary to convert types before comparison e.g. 
@@ -281,6 +300,8 @@ The event handler function can access the data from the *body* property of the *
       })
       ```
   
-      
+  - 3.6:
+  
+    - 
   
 - Create *dev* script : `nodemon index.js` and run.
