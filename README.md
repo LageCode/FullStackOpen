@@ -302,6 +302,21 @@ Middleware is a function that receives three parameters: `(request, response, ne
   
   - 3.6:
   
-    - 
+    - Check manually business rules:
+  
+      ```javascript
+      if (!req.body.name || !req.body.number) {
+              return res.status(400).json({ error: 'name and number musn\'t be missing' })
+          }
+      
+          if (contacts.filter(c => c.name === req.body.name).length > 0) {
+              return res.status(400).json({ error: 'name must be unique' })
+          }
+      ```
+  
+  - 3.7:
+  
+    - Install and import *morgan*.
+    - take morgan into use: `app.use(morgan('tiny')) // use morgan middleware`.
   
 - Create *dev* script : `nodemon index.js` and run.

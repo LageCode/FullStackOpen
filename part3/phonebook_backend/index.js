@@ -2,9 +2,18 @@ import express from 'express'
 import dotenv from 'dotenv'
 import morgan from 'morgan'
 
+
 const app = express() // use express
 app.use(express.json()) // use body parser (needed for POST)
-app.use(morgan('tiny')) // use morgan middleware
+
+morgan.token('body', (req) => {
+    if (Object.keys(req.body).length === 0) {
+        return ""
+    }
+
+    return JSON.stringify(req.body)
+})
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body')) // use morgan middleware
 
 dotenv.config() // fetch env vars from .env file
 
