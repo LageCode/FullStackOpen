@@ -7,7 +7,7 @@ dotenv.config() // fetch env vars from .env file
 
 const PORT = process.env.PORT
 
-const contacts = [
+let contacts = [
     { 
       "id": "1",
       "name": "Arto Hellas", 
@@ -49,6 +49,12 @@ app.get('/info', (req, res) => {
         <p>Phonebook has info for ${contacts.length} people</p>
         <p>${new Date()}</p>
     `)
+})
+
+app.delete('/api/persons/:id', (req, res) => {
+    const params = req.params
+    contacts = contacts.filter(c => c.id !== params.id)
+    res.status(204).end()
 })
 
 app.listen(PORT, () => { // use port env variable 

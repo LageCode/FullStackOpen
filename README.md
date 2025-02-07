@@ -249,4 +249,13 @@ The event handler function can access the data from the *body* property of the *
       })
       ```
   
+    - Used system dynamic variables feature offered by REST client to generate random requests: `GET http://localhost:3000/api/persons/{{$randomInt 1 6}}`
+  
+  - 3.4:
+  
+    - Create `delete` route.
+    - Fetch *id* param from `req.params` object.
+    - Filter list based on this *id*.
+    - Return status code 204
+  
 - Create *dev* script : `nodemon index.js` and run.
