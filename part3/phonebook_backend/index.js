@@ -32,21 +32,21 @@ let contacts = [
 ]
 
 app.get('/api/persons', (req, res) => {
-    res.json(contacts) // response.json -> a json object
+    return res.json(contacts) // response.json -> a json object
 })
 
 app.get('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
     const searchedPerson = contacts.find(c => Number(c.id) === id)
     if (searchedPerson) {
-        res.json(searchedPerson) 
+        return res.json(searchedPerson) 
     } else {
-        res.status(404).end()
+        return res.status(404).end()
     }
 })
 
 app.get('/info', (req, res) => {
-    res.send(`
+    return res.send(`
         <p>Phonebook has info for ${contacts.length} people</p>
         <p>${new Date()}</p>
     `)
@@ -55,15 +55,23 @@ app.get('/info', (req, res) => {
 app.delete('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
     contacts = contacts.filter(c => Number(c.id) !== id)
-    res.status(204).end()
+    return res.status(204).end()
 })
 
 const genId = () => Math.floor(Math.random() * 123456789)
 
 app.post('/api/persons', (req, res) => {
+    if (!req.body.name || !req.body.number) {
+        return res.status(400).json({ error: 'name and number musn\'t be missing' })
+    }
+
+    if (contacts.filter(c => c.name === req.body.name).length > 0) {
+        return res.status(400).json({ error: 'name must be unique' })
+    }
+
     const person = {...req.body, id: genId()}
     contacts.push(person)
-    res.json(person)
+    return res.json(person)
 })
 
 app.listen(PORT, () => { // use port env variable 
