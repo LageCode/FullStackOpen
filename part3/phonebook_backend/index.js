@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 
 const app = express() // use express
+app.use(express.json()) // Use body parser (needed for POST)
 
 dotenv.config() // fetch env vars from .env file
 
@@ -35,8 +36,8 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-    const searchedId = req.params.id
-    const searchedPerson = contacts.find(c => c.id === searchedId)
+    const id = Number(req.params.id)
+    const searchedPerson = contacts.find(c => Number(c.id) === id)
     if (searchedPerson) {
         res.json(searchedPerson) 
     } else {
@@ -52,9 +53,17 @@ app.get('/info', (req, res) => {
 })
 
 app.delete('/api/persons/:id', (req, res) => {
-    const params = req.params
-    contacts = contacts.filter(c => c.id !== params.id)
+    const id = Number(req.params.id)
+    contacts = contacts.filter(c => Number(c.id) !== id)
     res.status(204).end()
+})
+
+const genId = () => Math.floor(Math.random() * 123456789)
+
+app.post('/api/persons', (req, res) => {
+    const person = {...req.body, id: genId()}
+    contacts.push(person)
+    res.json(person)
 })
 
 app.listen(PORT, () => { // use port env variable 

@@ -256,6 +256,31 @@ The event handler function can access the data from the *body* property of the *
     - Create `delete` route.
     - Fetch *id* param from `req.params` object.
     - Filter list based on this *id*.
-    - Return status code 204
+    - Return status code 204.
+  
+  - 3.5: 
+  
+    - Use body parser:
+  
+      ```javascript
+      const app = express() // use express
+      app.use(express.json()) // Use body parser (needed for POST)
+      ```
+  
+    - The new generated ids will be of `Number` type. Since that, it's necessary to convert types before comparison e.g. 
+  
+      ```javascript
+      app.get('/api/persons/:id', (req, res) => {
+          const id = Number(req.params.id)
+          const searchedPerson = contacts.find(c => Number(c.id) === id)
+          if (searchedPerson) {
+              res.json(searchedPerson) 
+          } else {
+              res.status(404).end()
+          }
+      })
+      ```
+  
+      
   
 - Create *dev* script : `nodemon index.js` and run.
