@@ -209,14 +209,44 @@ The event handler function can access the data from the *body* property of the *
     - Create `index.js` ; 
 
       - Create `contacts` list.
-      - Create `app` object with `express()` and start listening:
-
-          ```javascript
-            app.listen(PORT, () => { // use port env variable 
-                console.log(`Server listening on port:${PORT}`)
-            })
-          ```
-
       
-
-    - Create *dev* script : `nodemon index.js` and run.
+      - Create `app` object with `express()`
+      
+      - Create `get` route:
+      
+          ```javascript
+          app.get('/api/persons', (req, res) => {
+              res.json(contacts) // response.json -> a json object
+          })
+          ```
+      
+      -  And start listening:
+      
+          ```javascript
+          app.listen(PORT, () => { // use port env variable 
+          	console.log(`Server listening on port:${PORT}`)
+          })
+          ```
+      
+  
+  - 3.2:
+  
+    - Create a second `get` route for the info endpoint and use the `send()` method (instead of `json()`) to return html content.
+  
+  - 3.3:
+  
+    - Create the third `get` route for displaying the data for a person if this one exists in the hardcoded list:
+  
+      ``` javascript
+      app.get('/api/persons/:id', (req, res) => {
+          const searchedId = req.params.id
+          const searchedPerson = contacts.find(c => c.id === searchedId)
+          if (searchedPerson) {
+              res.json(searchedPerson) 
+          } else {
+              res.status(404).end()
+          }
+      })
+      ```
+  
+- Create *dev* script : `nodemon index.js` and run.
